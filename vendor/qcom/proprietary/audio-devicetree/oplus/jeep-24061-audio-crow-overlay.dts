@@ -1,0 +1,12 @@
+/dts-v1/;
+/plugin/;
+#include <dt-bindings/oplus/hw-id.h>
+#include "../crow-audio-qrd.dts"
+#include "crow-audio-overlay-common.dtsi"
+#include "jeep-24061-audio-crow-overlay.dtsi"
+
+/ {
+    model = "Qualcomm Technologies, Inc. Crow QRD,Jeep";
+
+    oplus,project-id = <24061>;
+};

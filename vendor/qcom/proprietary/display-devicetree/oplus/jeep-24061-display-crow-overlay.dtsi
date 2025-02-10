@@ -1,0 +1,74 @@
+/* add for custom clk by gpio5 */
+#include <dt-bindings/clock/qcom,rpmh.h>
+#include "panel/dsi_panel_AC246_P_7_A0012_dsc_cmd.dtsi"
+
+&soc {
+	oplus_display_dev: oplus,dsi-display-dev {
+		oplus,dsi-panel-primary = <
+			&dsi_vtdr6130_amoled_video
+			&dsi_panel_AC246_P_7_A0012_dsc_cmd
+		>;
+		oplus,dsi-panel-secondary = <
+		>;
+		oplus,dsi-panel-extended = <>;
+	};
+
+	oplus_benz_dsi_panel_pwr_supply: oplus_benz_dsi_panel_pwr_supply {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		qcom,panel-supply-entry@0 {
+			reg = <0>;
+			qcom,supply-name = "vddio";
+			qcom,supply-min-voltage = <1800000>;
+			qcom,supply-max-voltage = <1800000>;
+			qcom,supply-enable-load = <200000>;
+			qcom,supply-disable-load = <80>;
+			qcom,supply-post-on-sleep = <20>;
+		};
+
+		qcom,panel-supply-entry@1 {
+			reg = <1>;
+			qcom,supply-name = "vci";
+			qcom,supply-min-voltage = <3000000>;
+			qcom,supply-max-voltage = <3000000>;
+			qcom,supply-enable-load = <10000>;
+			qcom,supply-disable-load = <0>;
+			qcom,supply-post-on-sleep = <1>;
+			qcom,supply-post-off-sleep = <2>;
+		};
+
+		qcom,panel-supply-entry@2 {
+			reg = <2>;
+			qcom,supply-name = "vdd";
+			qcom,supply-min-voltage = <1200000>;
+			qcom,supply-max-voltage = <1200000>;
+			qcom,supply-enable-load = <299000>;
+			qcom,supply-disable-load = <0>;
+			qcom,supply-post-on-sleep = <0>;
+			qcom,supply-post-off-sleep = <2>;
+		};
+
+		qcom,panel-supply-entry@3 {
+			reg = <3>;
+			qcom,supply-name = "s3c-vdd";
+			qcom,supply-min-voltage = <1200000>;
+			qcom,supply-max-voltage = <1200000>;
+			qcom,supply-enable-load = <299000>;
+			qcom,supply-disable-load = <0>;
+			qcom,supply-pre-on-sleep = <2>;
+			qcom,supply-post-on-sleep = <3>;
+			qcom,supply-pre-off-sleep = <2>;
+			qcom,supply-post-off-sleep = <3>;
+		};
+	};
+};
+
+&sde_dsi {
+	s3c-vdd-supply = <&S3C>;
+};
+
+&S3C {
+	regulator-max-microvolt = <1200000>;
+	qcom,init-voltage = <1200000>;
+};

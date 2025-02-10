@@ -1,0 +1,49 @@
+/dts-v1/;
+/plugin/;
+#include <dt-bindings/oplus/hw-id.h>
+#include "../qcom/crow-qrd-overlay.dts"
+#include "crow_overlay_common.dtsi"
+#include "jeep_overlay_common.dtsi"
+#include "oplus_misc/oplus-misc-24061.dtsi"
+#include "sensor/jeep-sensor-24061.dtsi"
+#include "nfc/jeep-nfc-sn220.dtsi"
+#include "tp/jeep-oplus-tp-24061.dtsi"
+#include "oplus_chg/oplus-chg-24061.dtsi"
+
+/ {
+    model = "Qualcomm Technologies, Inc. Crow QRD,Jeep";
+
+    oplus,project-id = <24061>;
+    oplus,hw-id = <OPLUS_EVB1 OPLUS_T0 OPLUS_T1 OPLUS_EVT1 OPLUS_DVT1 OPLUS_PVT1 OPLUS_MP1>;
+};
+
+&tlmm {
+  //#ifdef OPLUS_FEATURE_RF_CABLE_DETECT
+  rf_cable0_active: rf_cable0_active {
+    mux {
+      pins = "gpio113";
+      function = "gpio";
+    };
+    config {
+      pins = "gpio113";
+      drive-strength = <2>;
+      input-enable;
+      bias-pull-up;
+    };
+  };
+  //#endif /* OPLUS_FEATURE_RF_CABLE_DETECT */
+};
+
+&soc {
+  //#ifdef OPLUS_FEATURE_RF_CABLE_DETECT
+  oplus_rf_cable {
+    compatible = "oplus,rf_cable";
+    interrupt-parent = <&tlmm>;
+    rf_cable_support_num = <1>;
+    rf,cable0-gpio = <&tlmm 113 0>;
+    rf,cable-support-timer = <0>;
+    pinctrl-names = "rf_cable_active";
+    pinctrl-0 = <&rf_cable0_active>;
+  };
+  //#endif /* OPLUS_FEATURE_RF_CABLE_DETECT */
+};

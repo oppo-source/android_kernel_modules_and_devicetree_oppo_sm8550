@@ -1,0 +1,18 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/qcom,gcc-crow.h>
+#include <dt-bindings/clock/qcom,camcc-crow.h>
+#include <dt-bindings/interconnect/qcom,crow.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+
+#include "benz_camera_overlay_common.dtsi"
+#include "benz_camera_main_actuator_pid.dtsi"
+/ {
+	model = "Qualcomm Technologies, Inc. Crow MTP,Benz";
+	compatible = "qcom,crow";
+	qcom,msm-id = <608 0x10000>;
+	qcom,board-id = <11 0>;
+	oplus,project-id = <23061 23871 23872>;
+};

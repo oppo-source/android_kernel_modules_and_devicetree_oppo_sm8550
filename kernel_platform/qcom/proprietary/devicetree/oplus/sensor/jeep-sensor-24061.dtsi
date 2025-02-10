@@ -1,0 +1,102 @@
+/**********************************************************************************
+* Copyright (c)  2008-2021  Guangdong oplus Mobile Comm Corp., Ltd
+* Description: oplus sensor dtsi
+*
+* Version: 1.0
+* Date: 2021-07-12
+*
+* ------------------------------ Revision History: --------------------------------
+* <version>           <date>                <author>                            <desc>
+***********************************************************************************/
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+
+/* overlay default config and enable ir spi config */
+&qupv3_se14_i2c {
+	status = "disabled";
+};
+
+&qupv3_se14_spi{
+	/delete-property/ pinctrl-0;
+	/delete-property/ pinctrl-1;
+	pinctrl-0 = <&qupv3_se14_spi_mosi_active>;
+	pinctrl-1 = <&qupv3_se14_spi_sleep>;
+};
+
+&soc {
+	//#ifdef OPLUS_FEATURE_SENSOR_SMEM
+	/*enum sensor_id { OPLUS_ACCEL,OPLUS_GYRO,OPLUS_MAG,OPLUS_LIGHT,OPLUS_PROXIMITY,OPLUS_SAR,OPLUS_CT,OPLUS_BAROMETER,SENSORS_NUM};*/
+	sensor_fb: sensor_fb {
+		compatible = "oplus,sensor-feedback";
+		master-id  = <3>;
+		smem-id    = <608>;
+	};
+
+	ssc_interactive: ssc_interactive{
+		sup-power-fb;
+		sup-hbm-mode = <1>;
+		need_lb_algo = <1>;
+		report_blank_mode = <1>;
+
+		primary_lb_brl_info {
+			brl_thrd_num = <1>;
+			brl_thrd = <1>;
+			brl_l2h_thrd = <1>;
+		};
+	};
+
+	oplus_sensor {
+		compatible = "oplus,sensor-devinfo";
+		als-row-coe = <76>; /* old underLCD mode need config in dtsi */
+	};
+	consumer_ir_core {
+		compatible = "oplus,kookong_ir_core";
+		status = "okay";
+		vdd-type = <0>; /* 0: internal LDO , 1: external LOD */
+		vdd-supply = <&L15B>;
+		vdd-min-vol = <3200000>; /* aop:max3544mv min1504mv */
+		vdd-max-vol = <3200000>;
+	};
+	//#endif /*OPLUS_FEATURE_SENSOR_SMEM*/
+};
+
+&tlmm {
+	qupv3_se14_spi_pins: qupv3_se14_spi_pins {
+		qupv3_se14_spi_mosi_active: qupv3_se14_spi_mosi_active {
+			mux {
+				pins = "gpio57";
+				function = "qup1_se6_l1";
+			};
+
+			config {
+				pins = "gpio57";
+				drive-strength = <2>;
+				bias-disable;
+			};
+		};
+
+		qupv3_se14_spi_sleep: qupv3_se14_spi_sleep {
+			mux {
+				pins = "gpio57";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio57";
+				drive-strength = <2>;
+				bias-disable;
+			};
+		};
+	};
+};
+
+&qupv3_se14_spi{
+	status = "ok";
+	consumerIr@0 {
+		compatible = "oplus,kookong_ir_spi";
+		reg = <0>;
+		status = "ok";
+
+		spi-max-frequency = <5000000>;    /*4800000,9600000,15000000,19200000*/
+		ir-spi-mode = <0>;
+	};
+};

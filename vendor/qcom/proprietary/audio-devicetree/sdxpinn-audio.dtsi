@@ -1,0 +1,14 @@
+#include "sdx-audio-lpass.dtsi"
+
+&soc {
+	snd_934x: sound-tavil {
+		compatible = "qcom,sdx-asoc-snd-tavil";
+		qcom,model = "sdx-tavil-i2s-snd-card";
+		qcom,prim_mi2s_master = <&prim_master>;
+	};
+};
+
+&audio_co_heap {
+	status = "okay";
+	memory-region = <&audio_heap_mem>;
+};
