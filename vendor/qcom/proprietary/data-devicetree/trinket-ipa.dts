@@ -1,0 +1,15 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/soc/qcom,ipcc.h>
+#include <dt-bindings/interconnect/qcom,trinket.h>
+#include <dt-bindings/clock/qcom,gcc-trinket.h>
+#include <dt-bindings/clock/qcom,rpmcc.h>
+#include "ipa_v4.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Trinket";
+	compatible = "qcom,trinket";
+	qcom,msm-id = <467 0x10000>;
+};

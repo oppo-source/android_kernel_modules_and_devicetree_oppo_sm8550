@@ -1,0 +1,123 @@
+&tlmm {
+	aw_haptics: aw_haptics {
+		aw_irq_gpio_default: aw_irq_gpio_default {
+			mux {
+				pins = "gpio34";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio34";
+				drive-strength = <2>;
+				input-enable;
+				bias-pull-up;
+			};
+		};
+	};
+
+	qupv3_se12_i2c_pins: qupv3_se12_i2c_pins {
+		qupv3_se12_i2c_sda_active: qupv3_se12_i2c_sda_active {
+			mux {
+				pins = "gpio48";
+				function = "qup1_se4_l0";
+			};
+
+			config {
+				pins = "gpio48";
+				drive-strength = <2>;
+				bias-pull-up;
+				qcom,i2c_pull;
+			};
+		};
+
+		qupv3_se12_i2c_scl_active: qupv3_se12_i2c_scl_active {
+			mux {
+				pins = "gpio49";
+				function = "qup1_se4_l1";
+			};
+
+			config {
+				pins = "gpio49";
+				drive-strength = <2>;
+				bias-pull-up;
+				qcom,i2c_pull;
+			};
+		};
+
+		qupv3_se12_i2c_sleep: qupv3_se12_i2c_sleep {
+			mux {
+				pins = "gpio48", "gpio49";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio48", "gpio49";
+				drive-strength = <2>;
+			};
+		};
+	};
+};
+
+&pm7550ba_eusb2_repeater {
+	qcom,param-override-seq = <0x0e 0x51 0x06 0x53 0x03 0x54 0x05 0x57>;
+	qcom,param-override-seq-host = <0x08 0x51 0x06 0x53 0x03 0x54 0x05 0x57>;
+};
+
+&pm7550ba_vib {
+	status = "disabled";
+};
+
+&usb0 {
+/delete-property/ extcon;
+	dwc3@a600000 {
+		usb-phy = <&eusb2_phy0>, <&usb_nop_phy>;
+		maximum-speed = "high-speed";
+		snps,usb2-lpm-disable;
+		snps,usb2-gadget-lpm-disable;
+		dr_mode = "otg";
+	};
+};
+
+&usb_qmp_dp_phy {
+	status = "disabled";
+};
+
+&qupv3_se12_i2c {
+	pinctrl-names = "default", "sleep";
+	pinctrl-0 = <&qupv3_se12_i2c_sda_active>, <&qupv3_se12_i2c_scl_active>;
+	pinctrl-1 = <&qupv3_se12_i2c_sleep>;
+	status = "ok";
+	/* AWINIC AW8697 Haptic */
+	aw8697_haptic@5A {
+		compatible = "awinic,aw8697_haptic";
+		reg = <0x5A>;
+		reset-gpio = <&tlmm 55 0>;
+		irq-gpio = <&tlmm 34 0>;
+		status = "ok";
+		qcom,device_id = <809>; /* 809 */
+		/* haptic ic : aw86927 */
+		oplus,aw86927_boost_voltage = <85>; /* 0x55 */
+		haptic_hv_vmax = /bits/ 8 < 0x28 0x28 0x28 0x28 0x28 0x28 0x2C 0x30 0x34 0x38 0x3C 0x40 0x44 0x48 0x4C 0x50 0x55 >;
+		haptic_hv_gain = /bits/ 8 < 0x49 0x51 0x5A 0x62 0x6B 0x73 0x7C 0x80 0x80 0x80 0x80 0x80 0x80 0x80 0x80 0x80 0x80 >;
+
+		/* haptic ic 1: aw86907 */
+		oplus,aw86907_boost_voltage = <35>; /* 0x23 */
+		haptic_hv_aw86907_vmax = /bits/ 8 < 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x03 0x07 0x0C 0x10 0x13 0x16 0x1A 0x1D 0x20 0x23 >;
+		haptic_hv_aw86907_gain = /bits/ 8 < 0x40 0x49 0x51 0x5A 0x62 0x6B 0x73 0x7C 0x80 0x80 0x80 0x80 0x80 0x80 0x80 0x80 0x80 >;
+
+		pinctrl-names = "default";
+		pinctrl-0 = <&aw_irq_gpio_default>;
+		oplus,livetap_support;
+		oplus,auto_break_mode_support;
+		oplus,d2s_gain = /bits/ 8 <0x5>;
+		oplus,brk_time = /bits/ 8 <0x8>;
+		oplus,brk_gain = /bits/ 8 <0x6>;
+	};
+	/* AWINIC AW8697 Haptic End */
+};
+
+&soc {
+	feedback_fb: feedback_fb {
+		compatible = "oplus,haptic-feedback";
+	};
+};

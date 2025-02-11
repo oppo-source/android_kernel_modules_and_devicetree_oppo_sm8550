@@ -1,0 +1,14 @@
+#include "crow-audio-overlay.dtsi"
+
+&fm_i2s0_gpios {
+	status = "ok";
+};
+
+&kalama_snd {
+	qcom,model = "crow-idp-wsa883x-snd-card";
+	qcom,sku-model = "crow-idp-wsa883x-sku1-snd-card";
+	nvmem-cells = <&adsp_variant>;
+	nvmem-cell-names = "adsp_variant";
+	fsa4480-i2c-handle = <&fsa4480>;
+	qcom,pri-mi2s-gpios = <&fm_i2s0_gpios>;
+};

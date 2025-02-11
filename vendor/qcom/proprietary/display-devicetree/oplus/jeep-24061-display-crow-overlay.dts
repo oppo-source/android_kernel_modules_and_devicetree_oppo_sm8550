@@ -1,0 +1,13 @@
+/dts-v1/;
+/plugin/;
+#include <dt-bindings/oplus/hw-id.h>
+#include <dt-bindings/iio/qcom,spmi-adc5-gen3-pmk8550.h>
+#include "../display/crow-sde-display-qrd-overlay.dts"
+#include "kalama-display-overlay-common.dtsi"
+#include "jeep-24061-display-crow-overlay.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. crow QRD,jeep";
+
+	oplus,project-id = <24061>;
+};

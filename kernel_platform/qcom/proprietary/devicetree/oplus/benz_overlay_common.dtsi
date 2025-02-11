@@ -1,0 +1,59 @@
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+
+&apps_rsc_drv2 {
+//#ifdef OPLUS_FEATURE_DISPLAY //Configuration of the s3c for Panel power vddr supply
+	rpmh-regulator-smpc3 {
+		compatible = "qcom,rpmh-vrm-regulator";
+		qcom,resource-name = "smpc3";
+		S3C: pm_v6c_s3: regulator-pm_v6c_s3 {
+			regulator-name = "pm_v6c_s3";
+			qcom,set = <RPMH_REGULATOR_SET_ALL>;
+			regulator-min-microvolt = <1200000>;
+			regulator-max-microvolt = <1200000>;
+			qcom,init-voltage = <1200000>;
+		};
+	};
+//#endif /* OPLUS_FEATURE_DISPLAY */
+};
+
+&ramoops_mem {
+	alloc-ranges = <0x0 0x00000000 0xffffffff 0xffffffff>;
+	size = <0x0 0x240000>;
+	pmsg-size = <0x200000>;
+	console-size = <0x40000>;
+	mem-type = <2>;
+
+        dump_device_info_mem: device_info_mem@0xA4F00000 {
+            reg = <0 0xA4F00000 0 0x00008000>;
+            label = "dump_device_info_mem";
+        };
+};
+
+&soc {
+    oplus-pmic-monitor-log {
+        compatible = "oplus,pmic-monitor-log";
+        nvmem = <&pmk8550_sdam_5>, <&pmk8550_sdam_6>;
+        nvmem-names = "pon_log0", "pon_log1";
+    };
+
+    dump_device_info {
+        compatible = "dump_device_info";
+        linux,contiguous-region = <&dump_device_info_mem>;
+    };
+};
+
+/*modfiy for powerkey*/
+&pmk8550 {
+        pon_pbs@800 {
+                compatible = "qcom,qpnp-power-on";
+                reg = <0x800>;
+                qcom,system-reset;
+                qcom,store-hard-reset-reason;
+        };
+
+        pon_pmicwd@800 {
+                compatible = "oplus,pmicwd_qpnp-power-on";
+                qcom,pmicwd;
+        };
+};
+
