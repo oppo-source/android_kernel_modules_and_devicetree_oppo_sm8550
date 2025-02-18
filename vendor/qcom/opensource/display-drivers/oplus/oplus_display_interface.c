@@ -41,7 +41,7 @@ int oplus_panel_cmd_print(struct dsi_panel *panel, enum dsi_cmd_set_type type)
 	case DSI_CMD_ESD_SWITCH_PAGE:
 	case DSI_CMD_SKIPFRAME_DBV:
 	case DSI_CMD_DEFAULT_SWITCH_PAGE:
-#ifdef OPLUS_FEATURE_DISPLAY_ADFR
+#ifdef OPLUS_FEATURE_DISPLAY_ADFR_IGNORE
 	case DSI_CMD_ADFR_MIN_FPS_0:
 	case DSI_CMD_ADFR_MIN_FPS_1:
 	case DSI_CMD_ADFR_MIN_FPS_2:
@@ -57,21 +57,6 @@ int oplus_panel_cmd_print(struct dsi_panel *panel, enum dsi_cmd_set_type type)
 	case DSI_CMD_ADFR_MIN_FPS_12:
 	case DSI_CMD_ADFR_MIN_FPS_13:
 	case DSI_CMD_ADFR_MIN_FPS_14:
-	case DSI_CMD_ADFR_MIN_FPS_FRTC60_0:
-	case DSI_CMD_ADFR_MIN_FPS_FRTC60_1:
-	case DSI_CMD_ADFR_MIN_FPS_FRTC60_2:
-	case DSI_CMD_ADFR_MIN_FPS_FRTC60_3:
-	case DSI_CMD_ADFR_MIN_FPS_FRTC60_4:
-	case DSI_CMD_ADFR_MIN_FPS_FRTC60_5:
-	case DSI_CMD_ADFR_MIN_FPS_FRTC60_6:
-	case DSI_CMD_ADFR_MIN_FPS_FRTC60_7:
-	case DSI_CMD_ADFR_MIN_FPS_FRTC60_8:
-	case DSI_CMD_ADFR_MIN_FPS_FRTC60_9:
-	case DSI_CMD_ADFR_MIN_FPS_FRTC60_10:
-	case DSI_CMD_ADFR_MIN_FPS_FRTC60_11:
-	case DSI_CMD_ADFR_MIN_FPS_FRTC60_12:
-	case DSI_CMD_ADFR_MIN_FPS_FRTC60_13:
-	case DSI_CMD_ADFR_MIN_FPS_FRTC60_14:
 	case DSI_CMD_HPWM_ADFR_MIN_FPS_0:
 	case DSI_CMD_HPWM_ADFR_MIN_FPS_1:
 	case DSI_CMD_HPWM_ADFR_MIN_FPS_2:
@@ -92,7 +77,7 @@ int oplus_panel_cmd_print(struct dsi_panel *panel, enum dsi_cmd_set_type type)
 		/* Do nothing */
 		break;
 	default:
-		LCD_INFO("[%s] dsi_cmd: %s\n", panel->oplus_priv.vendor_name,
+		LCD_DEBUG("[%s] dsi_cmd: %s\n", panel->oplus_priv.vendor_name,
 				cmd_set_prop_map[type]);
 		break;
 	}

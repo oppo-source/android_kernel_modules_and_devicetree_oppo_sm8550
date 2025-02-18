@@ -402,7 +402,7 @@ inline void oplus_check_preempt_wakeup(struct rq *rq, struct task_struct *p, boo
 		return;
 
 #if IS_ENABLED(CONFIG_OPLUS_FEATURE_AUDIO_OPT)
-	if (is_audio_scene() && !IS_ERR_OR_NULL(ots)) {
+	if (is_audio_scene()) {
 		im_flag = oplus_get_im_flag(p);
 		wake_ux = test_bit(IM_FLAG_AUDIO_CAMERA_HAL, &im_flag) ? false : test_task_ux(p);
 		curr_ux = test_bit(IM_FLAG_AUDIO_CAMERA_HAL, &ots->im_flag) ? false : test_task_ux(curr);

@@ -69,11 +69,11 @@ bool wakeup_shrink_slabd(gfp_t gfp_mask, int nid,
 		return false;
 
 	if (!mutex_trylock(&async_shrink_slab_mutex))
-		return true;
+		return false;
 
 	if (asp.shrink_slabd_runnable == 1) {
 		mutex_unlock(&async_shrink_slab_mutex);
-		return true;
+		return false;
 	}
 	async_reclaim_state.reclaimed_slab = 0;
 	asp.reclaim_state = &async_reclaim_state;

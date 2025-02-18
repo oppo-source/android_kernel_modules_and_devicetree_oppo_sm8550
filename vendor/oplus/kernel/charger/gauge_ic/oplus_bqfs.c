@@ -693,16 +693,14 @@ BQFS_CHECK_END:
 
 int bqfs_init(struct chip_bq27541 *chip)
 {
-	struct device_node *node = NULL;
+	struct device_node *node = chip->dev->of_node;
 	struct device_node *bqfs_node = NULL;
 	const u8 *pBuf;
 	int bqfs_unfilt = 0, buflen = 0, batt_id = BAT_TYPE_UNKNOWN, rc = -1;
 	char dm_name[128] = {0}, data_name[128] = {0};
 
-	if (!chip ||!chip->dev ||!chip->dev->of_node)
+	if (!chip)
 		return -EINVAL;
-
-	node = chip->dev->of_node;
 
 	oplus_bqfs_track_init(chip);
 

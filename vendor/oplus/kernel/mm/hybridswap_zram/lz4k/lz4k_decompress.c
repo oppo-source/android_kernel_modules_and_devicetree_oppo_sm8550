@@ -9,8 +9,7 @@ static const BYTE *get_size(
 	do {
 		if (unlikely(source_at >= source_end))
 			return NULL;
-		u = *(const BYTE*)source_at;
-		*size += (u);
+		*size += (u = *(const BYTE*)source_at);
 		++source_at;
 	} while (BYTE_MAX == u);
 	return source_at;
@@ -22,11 +21,8 @@ inline static void while_lt_copy_x(
 	const BYTE *dst_end,
 	const size_t copy_min)
 {
-	for (; dst < dst_end;){
+	for (; dst < dst_end; dst += copy_min, src += copy_min)
 		LZ4_memcpy(dst, src, copy_min);
-		dst += copy_min;
-		src += copy_min;
-	}
 }
 
 inline static void copy_x_while_lt(
@@ -36,9 +32,7 @@ inline static void copy_x_while_lt(
 	const size_t copy_min)
 {
 	while (dst + copy_min < dst_end){
-		src += copy_min;
-		dst += copy_min;
-		LZ4_memcpy(dst, src, copy_min);
+		LZ4_memcpy(dst += copy_min, src += copy_min, copy_min);
 	}
 }
 
@@ -58,11 +52,8 @@ inline static void copy_2x_as_x2_while_lt(
 	const size_t copy_min)
 {
 	copy_2x(dst, src, copy_min);
-	while (dst + (copy_min << 1) < dst_end){
-		src += (copy_min << 1);
-		dst += (copy_min << 1);
-		copy_2x(dst, src, copy_min);
-	}
+	while (dst + (copy_min << 1) < dst_end)
+		copy_2x(dst += (copy_min << 1), src += (copy_min << 1), copy_min);
 }
 
 inline static void while_lt_copy_2x_as_x2(
@@ -71,11 +62,8 @@ inline static void while_lt_copy_2x_as_x2(
 	const BYTE *dst_end,
 	const size_t copy_min)
 {
-	for (; dst < dst_end;){
+	for (; dst < dst_end; dst += (copy_min << 1), src += (copy_min << 1))
 		copy_2x(dst, src, copy_min);
-		src += (copy_min << 1);
-		dst += (copy_min << 1);
-	}
 }
 
 static int end_of_block(
@@ -212,8 +200,6 @@ static int decompress(
 		/* get literal length and decompress */
 		if (unlikely(lit_length == mask(lit_log2))) {
 			source_at = get_size(&lit_length, source_at, source_end);
-			if (unlikely(source_at == NULL))
-				return -1;
 		}
 		if (!literal_decompress(&source_at, &dest_at, lit_length, source_end, dest_end))
 			return -1;

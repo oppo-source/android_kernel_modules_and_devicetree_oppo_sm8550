@@ -57,12 +57,8 @@ int oplus_get_quirks_plug_status(int type) {
 		chg_err("g_quirks_chip null!\n");
 		return 0;
 	}
-
-	if(oplus_is_vooc_project() != DUAL_BATT_150W &&
-		oplus_is_vooc_project() != DUAL_BATT_240W &&
-		!oplus_get_abnormal_disconnect_keep_connect())
+	if(oplus_is_vooc_project() != DUAL_BATT_150W && oplus_is_vooc_project() != DUAL_BATT_240W)
 		return 0;
-
 	mask = 1 << type;
 	chg_err(":%d, mask:%d\n", chip->quirks_plugin_status, (chip->quirks_plugin_status & mask) >> type);
 	return (chip->quirks_plugin_status & mask) >> type;
@@ -76,12 +72,8 @@ int oplus_set_quirks_plug_status(int type, int status) {
 		chg_err("g_quirks_chip null!\n");
 		return 0;
 	}
-
-	if(oplus_is_vooc_project() != DUAL_BATT_150W &&
-		oplus_is_vooc_project() != DUAL_BATT_240W &&
-		!oplus_get_abnormal_disconnect_keep_connect())
+	if(oplus_is_vooc_project() != DUAL_BATT_150W && oplus_is_vooc_project() != DUAL_BATT_240W)
 		return 0;
-
 	enable = status << type;
 	mask = 1 << type;
 	chip->quirks_plugin_status = (chip->quirks_plugin_status & ~mask) | (enable & mask);
@@ -95,12 +87,8 @@ int oplus_clear_quirks_plug_status(void) {
 		chg_err("g_quirks_chip null!\n");
 		return 0;
 	}
-
-	if(oplus_is_vooc_project() != DUAL_BATT_150W &&
-		oplus_is_vooc_project() != DUAL_BATT_240W &&
-		!oplus_get_abnormal_disconnect_keep_connect())
+	if(oplus_is_vooc_project() != DUAL_BATT_150W && oplus_is_vooc_project() != DUAL_BATT_240W)
 		return 0;
-
 	chg_err(":%d\n", chip->quirks_plugin_status);
 	chip->quirks_plugin_status = QUIRKS_NORMAL;
 	return chip->quirks_plugin_status;
@@ -131,12 +119,10 @@ static void oplus_quirks_set_awake(struct oplus_quirks_chip *chip, int time_ms)
 #else
 	if (!chip || !chip->awake_lock)
 		return;
-	if(oplus_is_vooc_project() != DUAL_BATT_150W &&
-		oplus_is_vooc_project() != DUAL_BATT_240W &&
-		!oplus_get_abnormal_disconnect_keep_connect())
+	if(oplus_is_vooc_project() != DUAL_BATT_150W && oplus_is_vooc_project() != DUAL_BATT_240W)
 		return;
-
 	chg_err(":%d, :%p\n", time_ms, chip->awake_lock->timer.function);
+
 	__pm_wakeup_event(chip->awake_lock, time_ms);
 
 	chg_err("end :%d\n", time_ms);
@@ -156,11 +142,8 @@ int abnormal_diconnect_count(void) {
 		chg_err("g_quirks_chip->plug_info_head.list null!\n");
 		return 0;
 	}
-	if(oplus_is_vooc_project() != DUAL_BATT_150W &&
-		oplus_is_vooc_project() != DUAL_BATT_240W &&
-		!oplus_get_abnormal_disconnect_keep_connect())
+	if(oplus_is_vooc_project() != DUAL_BATT_150W && oplus_is_vooc_project() != DUAL_BATT_240W)
 		return 0;
-
 	list_for_each_safe(pos, n, &g_quirks_chip->plug_info_head.list) {
 		info = list_entry(pos, struct plug_info, list);
 		if (time_is_after_jiffies(info->plugout_jiffies + msecs_to_jiffies(KEEP_CONNECT_TIME_OUT))) {
@@ -196,11 +179,8 @@ void clear_abnormal_diconnect_count(void) {
 		chg_err("g_quirks_chip->plug_info_head.list null!\n");
 		return;
 	}
-	if(oplus_is_vooc_project() != DUAL_BATT_150W &&
-		oplus_is_vooc_project() != DUAL_BATT_240W &&
-		!oplus_get_abnormal_disconnect_keep_connect())
+	if(oplus_is_vooc_project() != DUAL_BATT_150W && oplus_is_vooc_project() != DUAL_BATT_240W)
 		return;
-
 	list_for_each_safe(pos, n, &g_quirks_chip->plug_info_head.list) {
 		info = list_entry(pos, struct plug_info, list);
 		info->abnormal_diconnect = 0;
@@ -260,11 +240,10 @@ int oplus_quirks_keep_connect_status(void) {
 		chg_err("g_quirks_chip->plug_info_head.list null!\n");
 		return 0;
 	}
-
-	if(oplus_is_vooc_project() == DUAL_BATT_150W ||
-		oplus_is_vooc_project() == DUAL_BATT_240W ||
-		oplus_get_abnormal_disconnect_keep_connect()) {
+	if(oplus_is_vooc_project() == DUAL_BATT_150W || oplus_is_vooc_project() == DUAL_BATT_240W) {
 		if (chip->keep_connect) {
+			chg_err("keep_connect!:last_plugin_status:%d, keep_connect:%d, keep_connect_jiffies:%lu, jiffies:%lu\n",
+					atomic_read(&chip->last_plugin_status), chip->keep_connect, chip->keep_connect_jiffies, jiffies);
 			return 1;
 		}
 	}

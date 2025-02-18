@@ -8450,9 +8450,8 @@ int oplus_pps_pd_exit(void)
 int oplus_chg_get_charger_subtype(void)
 {
 	int charg_subtype = CHARGER_SUBTYPE_DEFAULT;
-	struct oplus_chg_chip *chip = g_oplus_chip;
 
-	if (!pinfo || !chip)
+	if (!pinfo)
 		return CHARGER_SUBTYPE_DEFAULT;
 
 	if (!oplus_chg_is_support_qcpd())
@@ -8465,19 +8464,12 @@ int oplus_chg_get_charger_subtype(void)
 
 	if (pinfo->pd_type == MTK_PD_CONNECT_PE_READY_SNK ||
 		pinfo->pd_type == MTK_PD_CONNECT_PE_READY_SNK_PD30) {
-		if (chip->pd_svooc || mt_power_supply_type_check() == POWER_SUPPLY_TYPE_USB_PD_SDP)
-			return CHARGER_SUBTYPE_DEFAULT;
-		else
-			return CHARGER_SUBTYPE_PD;
+		return CHARGER_SUBTYPE_PD;
 	} else if (pinfo->pd_type == MTK_PD_CONNECT_PE_READY_SNK_APDO) {
 		if (oplus_pps_check_third_pps_support())
 			return CHARGER_SUBTYPE_PPS;
-		else {
-			if (chip->pd_svooc || mt_power_supply_type_check() == POWER_SUPPLY_TYPE_USB_PD_SDP)
-				return CHARGER_SUBTYPE_DEFAULT;
-			else
-				return CHARGER_SUBTYPE_PD;
-		}
+		else
+			return CHARGER_SUBTYPE_PD;
 	}
 
 #ifdef CONFIG_OPLUS_HVDCP_SUPPORT

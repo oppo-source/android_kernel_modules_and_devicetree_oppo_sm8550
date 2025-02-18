@@ -212,7 +212,7 @@ struct state_disorder_monitor {
 enum en_gpio_type {
 	EN_CC_MUX = 0,
 	EN_VREG_5V,
-	EN_GPIO_MAX
+	EN_GPIO_MAX = 3
 };
 
 struct en_gpio_item {
@@ -359,6 +359,7 @@ static int sgm7220_read_reg(struct i2c_client *i2c, u8 reg, u8 *dest)
 
 static void oplus_keep_resume_awake_init(struct sgm7220_info *chip)
 {
+	chip->keep_resume_ws = NULL;
 	if (!chip) {
 		pr_err("[%s]chip is null\n", __func__);
 		return;
@@ -1258,7 +1259,7 @@ static int sgm7220_create_device(struct sgm7220_info *info)
 
 	dev_set_drvdata(info->dev_t, info);
 
-	for (attr = *attrs; attr != NULL; attr = *(++attrs)) {
+	while ((attr = *attrs++)) {
 		err = device_create_file(info->dev_t, attr);
 		if (err) {
 			device_destroy(info->device_class, 0);
@@ -1273,7 +1274,7 @@ static void sgm7220_destroy_device(struct sgm7220_info *info)
 	struct device_attribute **attrs = usb_typec_attributes;
 	struct device_attribute *attr;
 
-	for (attr = *attrs; attr != NULL; attr = *(++attrs))
+	while ((attr = *attrs++))
 		device_remove_file(info->dev_t, attr);
 
 	device_destroy(info->device_class, 0);
