@@ -1195,17 +1195,22 @@ err:
 
 static void gen7_hwsched_pm_resume(struct adreno_device *adreno_dev)
 {
+	struct kgsl_device *device = KGSL_DEVICE(adreno_dev);
 	struct gen7_gmu_device *gmu = to_gen7_gmu(adreno_dev);
 
 	if (WARN(!test_bit(GMU_PRIV_PM_SUSPEND, &gmu->flags),
 		"resume invoked without a suspend\n"))
 		return;
 
+	kgsl_pwrctrl_request_state(device, KGSL_STATE_SLUMBER);
+
 	adreno_put_gpu_halt(adreno_dev);
 
-	adreno_hwsched_start(adreno_dev);
-
 	clear_bit(GMU_PRIV_PM_SUSPEND, &gmu->flags);
+
+	kgsl_pwrctrl_set_state(device, KGSL_STATE_SLUMBER);
+
+	adreno_hwsched_start(adreno_dev);
 }
 
 void gen7_hwsched_handle_watchdog(struct adreno_device *adreno_dev)

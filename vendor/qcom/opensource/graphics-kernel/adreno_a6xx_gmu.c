@@ -23,6 +23,7 @@
 #include <linux/mailbox/qmp.h>
 #include <soc/qcom/cmd-db.h>
 #include <soc/qcom/boot_stats.h>
+#include <linux/version.h>
 
 #include "adreno.h"
 #include "adreno_a6xx.h"
@@ -2492,6 +2493,21 @@ static int a6xx_gmu_acd_set(struct kgsl_device *device, bool val)
 	return adreno_power_cycle(adreno_dev, set_acd, &val);
 }
 
+static void a6xx_send_tlb_hint(struct kgsl_device *device, bool val)
+{
+	struct adreno_device *adreno_dev = ADRENO_DEVICE(device);
+	struct a6xx_gmu_device *gmu = to_a6xx_gmu(adreno_dev);
+
+	if (!gmu->domain)
+		return;
+
+#if (KERNEL_VERSION(6, 1, 0) <= LINUX_VERSION_CODE)
+	qcom_skip_tlb_management(&gmu->pdev->dev, val);
+#endif
+	if (!val)
+		iommu_flush_iotlb_all(gmu->domain);
+}
+
 static const struct gmu_dev_ops a6xx_gmudev = {
 	.oob_set = a6xx_gmu_oob_set,
 	.oob_clear = a6xx_gmu_oob_clear,
@@ -2501,8 +2517,9 @@ static const struct gmu_dev_ops a6xx_gmudev = {
 	.wait_for_active_transition = a6xx_gmu_wait_for_active_transition,
 	.scales_bandwidth = a6xx_gmu_scales_bandwidth,
 	.acd_set = a6xx_gmu_acd_set,
-	.send_nmi = a6xx_gmu_send_nmi,
 	.force_first_boot = a6xx_gmu_force_first_boot,
+	.send_nmi = a6xx_gmu_send_nmi,
+	.send_tlb_hint = a6xx_send_tlb_hint,
 };
 
 static int a6xx_gmu_bus_set(struct adreno_device *adreno_dev, int buslevel,
@@ -3517,11 +3534,15 @@ static void a6xx_gmu_pm_resume(struct adreno_device *adreno_dev)
 		"resume invoked without a suspend\n"))
 		return;
 
+	kgsl_pwrctrl_request_state(device, KGSL_STATE_SLUMBER);
+
 	adreno_put_gpu_halt(adreno_dev);
 
-	adreno_dispatcher_start(device);
-
 	clear_bit(GMU_PRIV_PM_SUSPEND, &gmu->flags);
+
+	kgsl_pwrctrl_set_state(device, KGSL_STATE_SLUMBER);
+
+	adreno_dispatcher_start(device);
 }
 
 static void a6xx_gmu_touch_wakeup(struct adreno_device *adreno_dev)

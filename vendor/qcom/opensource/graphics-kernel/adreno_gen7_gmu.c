@@ -23,6 +23,7 @@
 #include <linux/sysfs.h>
 #include <linux/mailbox/qmp.h>
 #include <soc/qcom/cmd-db.h>
+#include <linux/version.h>
 
 #include "adreno.h"
 #include "adreno_gen7.h"
@@ -2047,6 +2048,21 @@ static u64 gen7_bcl_sid_get(struct kgsl_device *device, u32 sid_id)
 	}
 }
 
+static void gen7_send_tlb_hint(struct kgsl_device *device, bool val)
+{
+	struct adreno_device *adreno_dev = ADRENO_DEVICE(device);
+	struct gen7_gmu_device *gmu = to_gen7_gmu(adreno_dev);
+
+	if (!gmu->domain)
+		return;
+
+#if (KERNEL_VERSION(6, 1, 0) <= LINUX_VERSION_CODE)
+	qcom_skip_tlb_management(&gmu->pdev->dev, val);
+#endif
+	if (!val)
+		iommu_flush_iotlb_all(gmu->domain);
+}
+
 static const struct gmu_dev_ops gen7_gmudev = {
 	.oob_set = gen7_gmu_oob_set,
 	.oob_clear = gen7_gmu_oob_clear,
@@ -2059,6 +2075,7 @@ static const struct gmu_dev_ops gen7_gmudev = {
 	.bcl_sid_set = gen7_bcl_sid_set,
 	.bcl_sid_get = gen7_bcl_sid_get,
 	.send_nmi = gen7_gmu_send_nmi,
+	.send_tlb_hint = gen7_send_tlb_hint,
 };
 
 static int gen7_gmu_bus_set(struct adreno_device *adreno_dev, int buslevel,
@@ -3045,11 +3062,15 @@ static void gen7_gmu_pm_resume(struct adreno_device *adreno_dev)
 		"resume invoked without a suspend\n"))
 		return;
 
+	kgsl_pwrctrl_request_state(device, KGSL_STATE_SLUMBER);
+
 	adreno_put_gpu_halt(adreno_dev);
 
-	adreno_dispatcher_start(device);
-
 	clear_bit(GMU_PRIV_PM_SUSPEND, &gmu->flags);
+
+	kgsl_pwrctrl_set_state(device, KGSL_STATE_SLUMBER);
+
+	adreno_dispatcher_start(device);
 }
 
 static void gen7_gmu_touch_wakeup(struct adreno_device *adreno_dev)

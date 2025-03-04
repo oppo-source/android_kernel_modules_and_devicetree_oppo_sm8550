@@ -50,8 +50,8 @@
 #define MAX_UXMEM_POOL_ALLOC_RETRIES (5)
 
 static const unsigned int orders[] = {0, 1};
-/* 32M for order 0, 8M  for order1 by default */
-static const unsigned int page_pool_nr_pages[] = {(SZ_64M >> PAGE_SHIFT), (SZ_8M >> PAGE_SHIFT)};
+/* 64M + 32M for order 0, 8M  for order1 by default */
+static const unsigned int page_pool_nr_pages[] = {((SZ_64M + SZ_32M) >> PAGE_SHIFT), (SZ_8M >> PAGE_SHIFT)};
 #define NUM_ORDERS ARRAY_SIZE(orders)
 static struct page_pool *pools[NUM_ORDERS];
 static struct task_struct *ux_page_pool_tsk = NULL;
@@ -538,14 +538,20 @@ static int ux_page_pool_init(void)
 	return 0;
 }
 
-inline int task_is_fg(struct task_struct *tsk)
+inline bool is_top_task(struct task_struct *tsk)
 {
-	int cur_uid;
+	struct cgroup_subsys_state *css = NULL;
+	bool is_top;
 
-	cur_uid = task_uid(tsk).val;
-	if (is_fg(cur_uid))
-		return 1;
-	return 0;
+	if (tsk == NULL)
+		return false;
+
+	rcu_read_lock();
+	css = task_css(tsk, cpu_cgrp_id);
+	is_top = (css && css->id == SA_CGROUP_TOP_APP);
+	rcu_read_unlock();
+
+	return is_top;
 }
 
 static inline bool current_is_key_task(void)
@@ -554,8 +560,7 @@ static inline bool current_is_key_task(void)
 
 	return test_task_ux(current) || rt_task(current)
 		|| test_bit(IM_FLAG_SURFACEFLINGER, &im_flag)
-		|| test_bit(IM_FLAG_SYSTEMSERVER_PID, &im_flag)
-		|| task_is_fg(current);
+		|| test_bit(IM_FLAG_SYSTEMSERVER_PID, &im_flag);
 }
 
 static void __nocfi get_page_from_uxmempool(void *data, gfp_t gfp_mask, int order, int alloc_flags,
@@ -564,7 +569,7 @@ static void __nocfi get_page_from_uxmempool(void *data, gfp_t gfp_mask, int orde
 	struct page *page = NULL;
 	int i;
 
-	if (current_is_key_task() && !(gfp_mask & __GFP_DMA32)) {
+	if ((current_is_key_task() || is_top_task(current)) && !(gfp_mask & __GFP_DMA32)) {
 		page = ux_page_pool_alloc_pages(order, migratetype);
 		/* a refilled from __free_pages */
 		if (page && !page_count(page)) {

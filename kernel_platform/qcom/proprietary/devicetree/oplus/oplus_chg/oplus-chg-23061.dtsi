@@ -312,11 +312,8 @@
 		oplus_spec,vbat_uv_thr_mv = <3300>;
 		oplus_spec,vbat_charging_uv_thr_mv = <3200>;
 
-		/* High temperature long-term solution for Battery bulge */
-		oplus_spec,tbatt_power_off_cali_temp = <0>;
-		oplus_spec,poweroff_high_batt_temp = <720>;
-		oplus_spec,poweroff_emergency_batt_temp = <770>;
-
+		/*If use subboard NTC as battery temp, config it as 20, otherwise 0 */
+		oplus_spec,tbatt_power_off_cali_temp = <20>;
 		oplus,vooc_show_ui_soc_decimal;
 		oplus,ui_soc_decimal_speedmin = <20>;
 
@@ -467,15 +464,9 @@
 			oplus,adc_info_name = "855";
 			oplus,topic-update-interval = <5000>;
 
-			/* High temperature long-term solution for Battery bulge*/
-			high-temp-scheme;
-			oplus_spec,usbtemp_batt_temp_over_hot = <60>;
-			oplus_spec,usbtemp_temp_gap_with_batt_temp_in_over_hot = <15>;
-
 			oplus,support_usbtemp_protect_v2;
 			oplus_spec,usbtemp_batt_temp_low = <50>;
 			oplus_spec,usbtemp_batt_temp_high = <50>;
-
 			oplus_spec,usbtemp_ntc_temp_low = <57>;
 			oplus_spec,usbtemp_ntc_temp_high = <69>;
 			oplus_spec,usbtemp_temp_gap_low_with_batt_temp = <7>;

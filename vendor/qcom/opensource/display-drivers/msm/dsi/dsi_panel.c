@@ -5639,9 +5639,9 @@ int dsi_panel_switch(struct dsi_panel *panel)
 		if (panel->cur_mode->timing.refresh_rate == 90) {
 			oplus_sde_early_wakeup(panel);
 			oplus_wait_for_vsync(panel);
+			DSI_INFO("%s,%d\n", __func__, __LINE__);
 			oplus_need_to_sync_te(panel);
-			usleep_range(2000, 2000);
-			DSI_INFO("%s:%d\n", __func__, __LINE__);
+			DSI_INFO("%s,%d\n", __func__, __LINE__);
 		}
 	} else if (oplus_panel_pwm_onepulse_is_enabled(panel)) {
 		oplus_sde_early_wakeup(panel);

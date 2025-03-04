@@ -371,7 +371,7 @@
 		compatible = "sc,sc8547-slave";
 		reg = <0x6F 0>;
 		ocp_reg = <12>;
-		ovp_reg = <50>;
+		ovp_reg = <0x36>;
 	};
 };
 
@@ -933,7 +933,7 @@
 		pinctrl-2 = <&charging_inter_active>;
 		pinctrl-3 = <&charging_inter_sleep>;
 
-		ovp_reg = <22>;
+		ovp_reg = <0x36>;
 		ocp_reg = <12>;
 		oplus,ovp_ctrl_cp_index = <0>; //0:master cp 1:slave cp
 		qcom,svooc_circuit_r_l = <0x06>;

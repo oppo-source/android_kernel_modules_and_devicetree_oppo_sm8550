@@ -499,6 +499,7 @@ static void add_task_to_frame_group(struct frame_group *grp, struct task_struct 
 		return;
 	}
 
+	get_task_struct(task);
 	list_add(&ots->fbg_list, &grp->tasks);
 	ots->fbg_state = STATIC_FRAME_TASK;
 
@@ -532,9 +533,6 @@ void set_ui_thread(int grp_id, int pid, int tid)
 
 	rcu_read_lock();
 	ui = find_task_by_vpid(pid);
-	if (ui)
-		get_task_struct(ui);
-	rcu_read_unlock();
 
 	if (grp->ui)
 		clear_all_static_frame_task(grp);
@@ -544,7 +542,7 @@ void set_ui_thread(int grp_id, int pid, int tid)
 		grp->ui_pid = pid;
 		add_task_to_frame_group(grp, ui);
 	}
-
+	rcu_read_unlock();
 	raw_spin_unlock_irqrestore(lock, flags);
 }
 EXPORT_SYMBOL_GPL(set_ui_thread);
@@ -566,9 +564,6 @@ void set_render_thread(int grp_id, int pid, int tid)
 
 	rcu_read_lock();
 	render = find_task_by_vpid(tid);
-	if (render)
-		get_task_struct(render);
-	rcu_read_unlock();
 
 	if (grp->render)
 		remove_task_from_frame_group(grp->render);
@@ -578,7 +573,7 @@ void set_render_thread(int grp_id, int pid, int tid)
 		grp->render_pid = tid;
 		add_task_to_frame_group(grp, render);
 	}
-
+	rcu_read_unlock();
 	raw_spin_unlock_irqrestore(lock, flags);
 }
 EXPORT_SYMBOL_GPL(set_render_thread);
@@ -601,11 +596,6 @@ void set_hwui_thread(int grp_id, int pid, int hwtid1, int hwtid2)
 	rcu_read_lock();
 	hwtask1 = find_task_by_vpid(hwtid1);
 	hwtask2 = find_task_by_vpid(hwtid2);
-	if (hwtask1 && hwtask2) {
-		get_task_struct(hwtask1);
-		get_task_struct(hwtask2);
-	}
-	rcu_read_unlock();
 
 	if (grp->hwtask1)
 		remove_task_from_frame_group(grp->hwtask1);
@@ -620,7 +610,7 @@ void set_hwui_thread(int grp_id, int pid, int hwtid1, int hwtid2)
 		add_task_to_frame_group(grp, hwtask1);
 		add_task_to_frame_group(grp, hwtask2);
 	}
-
+	rcu_read_unlock();
 	raw_spin_unlock_irqrestore(lock, flags);
 }
 EXPORT_SYMBOL_GPL(set_hwui_thread);
@@ -648,9 +638,6 @@ void set_sf_thread(int pid, int tid)
 
 	rcu_read_lock();
 	ui = find_task_by_vpid(pid);
-	if (ui)
-		get_task_struct(ui);
-	rcu_read_unlock();
 
 	if (grp->ui)
 		clear_all_static_frame_task(grp);
@@ -660,7 +647,7 @@ void set_sf_thread(int pid, int tid)
 		grp->ui_pid = pid;
 		add_task_to_frame_group(grp, ui);
 	}
-
+	rcu_read_unlock();
 	raw_spin_unlock_irqrestore(&sf_fbg_lock, flags);
 }
 EXPORT_SYMBOL_GPL(set_sf_thread);
@@ -679,9 +666,6 @@ void set_renderengine_thread(int pid, int tid)
 
 	rcu_read_lock();
 	render = find_task_by_vpid(tid);
-	if (render)
-		get_task_struct(render);
-	rcu_read_unlock();
 
 	if (grp->render)
 		remove_task_from_frame_group(grp->render);
@@ -691,7 +675,7 @@ void set_renderengine_thread(int pid, int tid)
 		grp->render_pid = tid;
 		add_task_to_frame_group(grp, render);
 	}
-
+	rcu_read_unlock();
 	raw_spin_unlock_irqrestore(&sf_fbg_lock, flags);
 }
 EXPORT_SYMBOL_GPL(set_renderengine_thread);
@@ -725,7 +709,6 @@ bool add_rm_related_frame_task(int grp_id, int pid, int tid, int add, int r_dept
 	id_get_group(grp_id, &grp, &lock);
 	raw_spin_lock_irqsave(lock, flags);
 	if (add && is_same_uid(tsk, grp->ui)) {
-		get_task_struct(tsk);
 		add_task_to_frame_group(grp, tsk);
 	} else if (!add) {
 		remove_task_from_frame_group(tsk);
@@ -776,7 +759,6 @@ bool add_task_to_game_frame_group(int tid, int add)
 	grp = &game_frame_boost_group;
 	raw_spin_lock_irqsave(&game_fbg_lock, flags);
 	if (add) {
-		get_task_struct(tsk);
 		add_task_to_frame_group(grp, tsk);
 	} else if (!add) {
 		remove_task_from_frame_group(tsk);

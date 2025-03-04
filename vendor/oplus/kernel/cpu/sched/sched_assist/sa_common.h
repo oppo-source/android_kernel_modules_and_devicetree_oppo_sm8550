@@ -725,7 +725,7 @@ bool sa_skip_rt_sync(struct rq *rq, struct task_struct *p, bool *sync);
 bool sa_rt_skip_ux_cpu(int cpu);
 
 /* s64 account_ux_runtime(struct rq *rq, struct task_struct *curr); */
-void opt_ss_lock_contention(struct task_struct *p, unsigned long old_im, int new_im);
+void opt_ss_lock_contention(struct task_struct *p, int old_im, int new_im);
 
 /* register vender hook in kernel/sched/topology.c */
 void android_vh_build_sched_domains_handler(void *unused, bool has_asym);

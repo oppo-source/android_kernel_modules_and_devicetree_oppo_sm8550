@@ -1801,6 +1801,20 @@ static bool lim_is_puncture_same(tLimChannelSwitchInfo *lim_ch_switch,
 }
 #endif
 
+static void lim_csa_update_bw_for_assoc(uint8_t vdev_id,
+					struct csa_offload_params *csa_params)
+{
+	enum phy_ch_width max_ch_width;
+
+	max_ch_width = wma_get_assoc_bw(vdev_id);
+	if (csa_params->new_ch_width > max_ch_width) {
+		pe_debug("Downgrade bw from %d to assoc bw %d",
+			 csa_params->new_ch_width, max_ch_width);
+		max_ch_width = wma_get_assoc_bw(vdev_id);
+		csa_params->new_ch_width = max_ch_width;
+	}
+}
+
 void lim_handle_sta_csa_param(struct mac_context *mac_ctx,
 			      struct csa_offload_params *csa_params)
 {
@@ -1840,6 +1854,8 @@ void lim_handle_sta_csa_param(struct mac_context *mac_ctx,
 		pe_debug("Invalid role to handle CSA");
 		goto err;
 	}
+
+	lim_csa_update_bw_for_assoc(session_entry->vdev_id, csa_params);
 
 	if (!lim_is_csa_channel_allowed(mac_ctx, session_entry,
 					session_entry->curr_op_freq,

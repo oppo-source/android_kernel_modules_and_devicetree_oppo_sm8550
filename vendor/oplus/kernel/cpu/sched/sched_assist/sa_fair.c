@@ -189,8 +189,7 @@ bool set_ux_task_to_prefer_cpu(struct task_struct *task, int *orig_target_cpu)
 	int start_cls = -1;
 	int cpu = 0;
 	int direction = -1;
-	int strict_cpu = -1, subopt_cpu = -1;
-	bool walk_next_cls = false;
+	int subopt_cpu = -1;
 	bool invalid_target = false;
 	int orig_cls_id = 0;
 
@@ -232,19 +231,12 @@ retry:
 			continue;
 #endif
 
-		if (strict_ux_task(task) && cpu_online(cpu) && cpu_active(cpu) && cpumask_test_cpu(cpu, task->cpus_ptr)) {
-			/*
-			 * If the thread running on the CPU being traversed is neither UX nor RT,
-			 * then it is the best one, otherwise it is an alternative CPU.
-			 */
-			if (oplus_rbtree_empty(&orq->ux_list) && !rt_rq_is_runnable(&rq->rt)) {
-				strict_cpu = cpu;
-				walk_next_cls = false;
-			} else {
-				subopt_cpu = cpu;
-				walk_next_cls = (direction == 1) && (cls_nr != ux_cputopo.cls_nr - 1);
-			}
-		}
+		/*
+		 * strict_ux case: The system runs on a heavy load picking no cpu,
+		 *  and prevent EAS picking a small core
+		 */
+		if (strict_ux_task(task) && (subopt_cpu == -1) && cpu_online(cpu) && cpu_active(cpu) && cpumask_test_cpu(cpu, task->cpus_ptr))
+			subopt_cpu = cpu;
 
 		/* If an ux thread running on this CPU, drop it! */
 		if (oplus_get_ux_state(rq->curr) & SCHED_ASSIST_UX_MASK)
@@ -262,26 +254,20 @@ retry:
 
 		if (cpu_online(cpu) && cpu_active(cpu) && cpumask_test_cpu(cpu, task->cpus_ptr)) {
 			*orig_target_cpu = cpu;
-			trace_set_ux_task_to_prefer_cpu(task, *orig_target_cpu, strict_cpu, cls_nr, start_cls);
+			trace_set_ux_task_to_prefer_cpu(task, "normal", *orig_target_cpu, subopt_cpu, cls_nr, start_cls);
 			return true;
 		}
-	}
-
-	if (strict_cpu != -1) {
-		*orig_target_cpu = strict_cpu;
-		trace_set_ux_task_to_prefer_cpu(task, *orig_target_cpu, strict_cpu, cls_nr, start_cls);
-		return true;
-	}
-
-	if (!walk_next_cls && subopt_cpu != -1) {
-		*orig_target_cpu = subopt_cpu;
-		trace_set_ux_task_to_prefer_cpu(task, *orig_target_cpu, strict_cpu, cls_nr, start_cls);
-		return true;
 	}
 
 	cls_nr = cls_nr + direction;
 	if (cls_nr > 0 && cls_nr < ux_cputopo.cls_nr)
 		goto retry;
+
+	if (subopt_cpu != -1) {
+		*orig_target_cpu = subopt_cpu;
+		trace_set_ux_task_to_prefer_cpu(task, "subopt", *orig_target_cpu, subopt_cpu, cls_nr, start_cls);
+		return true;
+	}
 
 	return false;
 }
@@ -402,7 +388,7 @@ inline void oplus_check_preempt_wakeup(struct rq *rq, struct task_struct *p, boo
 		return;
 
 #if IS_ENABLED(CONFIG_OPLUS_FEATURE_AUDIO_OPT)
-	if (is_audio_scene()) {
+	if (is_audio_scene() && !IS_ERR_OR_NULL(ots)) {
 		im_flag = oplus_get_im_flag(p);
 		wake_ux = test_bit(IM_FLAG_AUDIO_CAMERA_HAL, &im_flag) ? false : test_task_ux(p);
 		curr_ux = test_bit(IM_FLAG_AUDIO_CAMERA_HAL, &ots->im_flag) ? false : test_task_ux(curr);

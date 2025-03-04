@@ -1225,9 +1225,13 @@ static void a6xx_rgmu_pm_resume(struct adreno_device *adreno_dev)
 		"resume invoked without a suspend\n"))
 		return;
 
+	kgsl_pwrctrl_request_state(device, KGSL_STATE_SLUMBER);
+
 	adreno_put_gpu_halt(adreno_dev);
 
 	clear_bit(RGMU_PRIV_PM_SUSPEND, &rgmu->flags);
+
+	kgsl_pwrctrl_set_state(device, KGSL_STATE_SLUMBER);
 
 	adreno_dispatcher_start(device);
 }

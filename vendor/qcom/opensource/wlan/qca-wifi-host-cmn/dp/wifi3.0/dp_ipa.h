@@ -498,6 +498,15 @@ static inline void dp_ipa_opt_dp_ixo_remap(uint8_t *ix0_map)
 }
 #endif
 
+/**
+ * dp_ipa_is_ring_ipa_tx() - Check if the TX ring is used by IPA
+ *
+ * @soc: DP SoC
+ * @ring_id: TX ring id
+ *
+ * Return: bool
+ */
+bool dp_ipa_is_ring_ipa_tx(struct dp_soc *soc, uint8_t ring_id);
 #else
 static inline int dp_ipa_uc_detach(struct dp_soc *soc, struct dp_pdev *pdev)
 {
@@ -597,5 +606,10 @@ static inline QDF_STATUS dp_ipa_ast_create(struct cdp_soc_t *soc_hdl,
 }
 #endif
 
+static inline bool
+dp_ipa_is_ring_ipa_tx(struct dp_soc *soc, uint8_t ring_id)
+{
+	return false;
+}
 #endif
 #endif /* _DP_IPA_H_ */

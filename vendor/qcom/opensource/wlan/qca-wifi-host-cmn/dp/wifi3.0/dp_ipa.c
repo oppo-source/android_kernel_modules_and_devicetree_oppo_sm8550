@@ -3908,4 +3908,24 @@ QDF_STATUS dp_ipa_ast_create(struct cdp_soc_t *soc_hdl,
 	return QDF_STATUS_SUCCESS;
 }
 #endif
+
+#ifdef IPA_WDI3_TX_TWO_PIPES
+bool dp_ipa_is_ring_ipa_tx(struct dp_soc *soc, uint8_t ring_id)
+{
+	if (!soc->wlan_cfg_ctx->ipa_enabled)
+		return false;
+
+	return (ring_id == IPA_TCL_DATA_RING_IDX) ||
+		((ring_id == IPA_TX_ALT_RING_IDX) &&
+		 wlan_cfg_is_ipa_two_tx_pipes_enabled(soc->wlan_cfg_ctx));
+}
+#else
+bool dp_ipa_is_ring_ipa_tx(struct dp_soc *soc, uint8_t ring_id)
+{
+	if (!soc->wlan_cfg_ctx->ipa_enabled)
+		return false;
+
+	return (ring_id == IPA_TCL_DATA_RING_IDX);
+}
+#endif /* IPA_WDI3_TX_TWO_PIPES */
 #endif

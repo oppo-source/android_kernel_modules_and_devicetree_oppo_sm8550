@@ -356,6 +356,8 @@ static size_t _iopgtbl_map_sg(struct kgsl_iommu_pt *pt, u64 gpuaddr,
 
 static void kgsl_iommu_send_tlb_hint(struct kgsl_mmu *mmu, bool hint)
 {
+	struct kgsl_device *device = KGSL_MMU_DEVICE(mmu);
+
 #if (KERNEL_VERSION(5, 15, 0) <= LINUX_VERSION_CODE)
 	struct kgsl_iommu *iommu = &mmu->iommu;
 
@@ -375,6 +377,9 @@ static void kgsl_iommu_send_tlb_hint(struct kgsl_mmu *mmu, bool hint)
 	 */
 	if (!hint)
 		kgsl_iommu_flush_tlb(mmu);
+
+	/* TLB hint for GMU domain */
+	gmu_core_send_tlb_hint(device, hint);
 }
 
 static int

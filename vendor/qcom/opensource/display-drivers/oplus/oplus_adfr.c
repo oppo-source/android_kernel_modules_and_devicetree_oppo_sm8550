@@ -500,13 +500,16 @@ static int oplus_adfr_panel_cmd_switch(struct dsi_panel *panel, enum dsi_cmd_set
 	struct oplus_adfr_params *p_oplus_adfr_params = NULL;
 	enum dsi_cmd_set_type type_store = *type;
 	u32 count;
+	u32 h_skew = STANDARD_ADFR;
+	u32 refresh_rate;
 
 	p_oplus_adfr_params = oplus_adfr_get_params(panel);
-	if (!p_oplus_adfr_params) {
+	if (!p_oplus_adfr_params || (panel->cur_mode == NULL)) {
 		ADFR_ERR("invalid p_oplus_adfr_params param\n");
 		return -EINVAL;
 	}
-
+	h_skew = panel->cur_mode->timing.h_skew;
+	refresh_rate = panel->cur_mode->timing.refresh_rate;
 	/* switch the command when switch to hpwm state */
 	if (oplus_panel_pwm_turbo_switch_state(panel) != PWM_SWITCH_DC_STATE) {
 		switch (*type) {
@@ -536,7 +539,8 @@ static int oplus_adfr_panel_cmd_switch(struct dsi_panel *panel, enum dsi_cmd_set
 		}
 	}
 
-	if (p_oplus_adfr_params->panel_high_precision_state == OPLUS_ADFR_HIGH_PRECISION_FPS_60) {
+	if ((p_oplus_adfr_params->panel_high_precision_state == OPLUS_ADFR_HIGH_PRECISION_FPS_60)
+			&& ((h_skew == STANDARD_ADFR) && (refresh_rate == 120))) {
 		switch (*type) {
 		case DSI_CMD_ADFR_MIN_FPS_0:
 			*type = DSI_CMD_ADFR_MIN_FPS_FRTC60_0;
@@ -585,7 +589,8 @@ static int oplus_adfr_panel_cmd_switch(struct dsi_panel *panel, enum dsi_cmd_set
 		}
 	}
 
-	if (oplus_panel_pwm_onepulse_is_enabled(panel)) {
+	if (oplus_panel_pwm_onepulse_is_enabled(panel)
+			&& ((h_skew == STANDARD_ADFR) && (refresh_rate == 120))) {
 		switch (*type) {
 		case DSI_CMD_ADFR_HIGH_PRECISION_FPS_0:
 			*type = DSI_CMD_HPWM_ADFR_HIGH_PRECISION_FPS_FRTC60_0;
