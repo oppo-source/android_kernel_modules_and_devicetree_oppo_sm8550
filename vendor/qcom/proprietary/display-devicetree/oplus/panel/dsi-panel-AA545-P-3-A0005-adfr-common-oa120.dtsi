@@ -1,0 +1,73 @@
+				/* oplus adfr */
+				qcom,mdss-dsi-h-sync-skew = <2>;
+				oplus,adfr-min-fps-mapping-table = <120 30>;
+
+				qcom,mdss-dsi-hbm-on-command = [
+					39 00 00 40 00 00 04 FF 08 58 00
+					15 00 00 40 00 00 02 60 02
+					39 00 00 40 00 00 04 FF 08 58 2D
+					15 00 00 40 00 00 02 85 00
+					15 00 00 40 00 00 02 EB 00
+					15 00 00 00 09 00 02 2C 00
+					39 00 00 40 00 00 04 FF 08 58 00
+					39 00 00 40 00 00 05 51 0D BB 00 00
+					39 00 00 40 00 00 04 FF 08 58 4F
+					15 00 00 40 00 00 02 88 78
+					39 00 00 40 00 00 04 FF 08 58 23
+					15 00 00 40 00 00 02 B4 70
+					39 00 00 40 00 00 04 FF 08 58 10
+					15 00 00 40 00 00 02 80 12
+					15 00 00 40 00 00 02 83 2B
+					39 00 00 40 00 00 04 FF 08 58 4F
+					15 00 00 40 00 00 02 8A 78
+					39 00 00 40 00 00 04 FF 08 58 23
+					15 00 00 40 00 00 02 B4 30
+					39 00 00 40 00 00 04 FF 08 58 10
+					15 00 00 40 00 00 02 80 92
+					15 00 00 40 00 00 02 83 0B
+					39 00 00 40 00 00 04 FF 08 58 4F
+					15 00 00 40 00 00 02 8B 78
+					39 00 00 00 00 00 04 FF 08 58 00
+				];
+
+				qcom,mdss-dsi-qsync-on-commands = [
+				];
+				qcom,mdss-dsi-qsync-off-commands = [
+					//83 XX, Min Freq = 120/(1+XX)
+					39 00 00 40 00 00 04 FF 08 58 2D
+					15 00 00 40 00 00 02 98 00
+					15 00 00 40 00 00 02 85 00
+					39 00 00 40 00 00 04 FF 08 58 00
+					15 00 00 00 00 00 02 2C 00
+				];
+				qcom,mdss-dsi-adfr-min-fps-0-command = [
+					//85 XX, Min Freq = 120/(1+XX)
+					39 00 00 40 00 00 04 FF 08 58 2D
+					15 00 00 40 00 00 02 98 00
+					15 00 00 40 00 00 02 85 00
+					39 00 00 40 00 00 04 FF 08 58 00
+					15 00 00 00 00 00 02 2C 00
+				];
+				qcom,mdss-dsi-adfr-min-fps-1-command = [
+					//85 XX, Min Freq = 120/(1+XX)
+					39 00 00 40 00 00 04 FF 08 58 2D
+					15 00 00 40 00 00 02 98 03
+					15 00 00 40 00 00 02 85 03
+					39 00 00 40 00 00 04 FF 08 58 00
+					15 00 00 00 00 00 02 2C 00
+				];
+
+				qcom,mdss-dsi-adfr-pre-switch-command = [
+					//locked to 120hz, next frame takes effect
+					39 00 00 40 00 00 04 FF 08 58 2D
+					15 00 00 40 00 00 02 98 00
+					15 00 00 40 00 00 02 85 00
+					15 00 00 40 00 00 02 89 00
+					39 00 00 40 00 00 04 FF 08 58 00
+					15 00 00 00 00 00 02 2C 00
+				];
+
+				qcom,mdss-dsi-hbm-on-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-adfr-min-fps-0-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-adfr-min-fps-1-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-adfr-pre-switch-command-state = "dsi_hs_mode";

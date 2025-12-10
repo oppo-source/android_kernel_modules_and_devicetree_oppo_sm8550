@@ -1,0 +1,262 @@
+/***************************************************************
+** Copyright (C), 2022, OPLUS Mobile Comm Corp., Ltd
+**
+** Description : 120fps common config
+** Version : NA
+** Date : 2022/09/06
+** Author : Oplus Display
+******************************************************************/
+
+				qcom,mdss-dsi-h-left-border = <0>;
+				qcom,mdss-dsi-h-right-border = <0>;
+				qcom,mdss-dsi-v-top-border = <0>;
+				qcom,mdss-dsi-v-bottom-border = <0>;
+				qcom,mdss-dsi-panel-jitter = <0x4 0x1>;
+
+				/* ofp config */
+				oplus,ofp-need-to-sync-data-in-aod-unlocking;
+				oplus,ofp-need-to-separate-backlight;
+				oplus,ofp-backlight-on-period = <1>;
+
+				qcom,mdss-dsi-post-on-backlight = [
+					/* Display On */
+					15 00 00 00 00 00 02 29 00
+				];
+
+				qcom,mdss-dsi-off-command = [
+					39 00 00 00 00 00 04 FF 08 58 00
+					/* Display Off(28h) */
+					15 00 00 00 14 00 02 28 00
+					/* Sleep In(10h) */
+					15 00 00 00 78 00 02 10 00
+				];
+
+				qcom,mdss-dsi-esd-switch-page-command = [
+					39 01 00 00 00 00 04 FF 08 58 20
+				];
+
+				qcom,mdss-dsi-default-switch-page-command = [
+					39 01 00 00 00 00 04 FF 08 58 00
+				];
+
+				qcom,mdss-dsi-panel-info-switch-page-command = [
+					39 01 00 00 00 00 04 FF 08 58 00
+				];
+
+				qcom,dsi-panel-date-switch-command = [
+					39 01 00 00 00 00 04 FF 08 58 1D
+				];
+
+				qcom,mdss-dsi-lp1-command = [
+					/*HSTV change to optimize AOD Flicker*/
+					39 00 00 40 00 00 04 FF 08 58 0B
+					15 00 00 40 00 00 02 86 10
+					15 00 00 40 00 00 02 A0 70
+					/* EL setting */
+					39 00 00 40 00 00 04 FF 08 58 1F
+					15 00 00 40 00 00 02 87 2F
+					/*Remapping off*/
+					39 00 00 40 00 00 04 FF 08 58 63
+					15 00 00 40 00 00 02 A0 00
+					/* AOD Mode ON Setting */
+					39 00 00 40 00 00 04 FF 08 58 00
+					05 00 00 40 00 00 01 39
+					15 00 00 40 00 00 02 61 0D
+					39 00 00 40 00 00 05 51 00 00 0C D4
+					39 00 00 00 00 00 04 FF 08 58 00
+				];
+				qcom,mdss-dsi-nolp-command = [
+					/* CMD Q start */
+					39 00 00 40 00 00 04 FF 08 58 4F
+					15 00 00 40 00 00 02 80 01
+					15 00 00 40 00 00 02 81 02
+					15 00 00 40 00 00 02 88 78
+					/* remove black frame */
+					39 00 00 40 00 00 04 FF 08 58 02
+					15 00 00 40 00 00 02 88 C0
+					/*HSTV change return to normal*/
+					39 00 00 40 00 00 04 FF 08 58 0B
+					15 00 00 40 00 00 02 86 00
+					15 00 00 40 00 00 02 A0 00
+					/* EL setting */
+					39 00 00 40 00 00 04 FF 08 58 1F
+					15 00 00 40 00 00 02 87 29
+					/*Remapping on*/
+					39 00 00 40 00 00 04 FF 08 58 63
+					15 00 00 40 00 00 02 A0 01
+					/* AOD OFF */
+					39 00 00 40 00 00 04 FF 08 58 00
+					15 00 00 40 00 00 02 38 00
+					/* CMD Q done */
+					39 00 00 40 00 00 04 FF 08 58 4F
+					15 00 00 40 00 00 02 8B 78
+					39 00 00 00 00 00 04 FF 08 58 00
+				];
+				qcom,mdss-dsi-aod-high-mode-command = [
+					39 00 00 40 00 00 04 FF 08 58 00
+					15 00 00 40 00 00 02 39 00
+					39 00 00 00 00 00 05 51 00 00 0C D4
+				];
+				qcom,mdss-dsi-aod-low-mode-command = [
+					39 00 00 40 00 00 04 FF 08 58 00
+					15 00 00 40 00 00 02 39 00
+					39 00 00 00 00 00 05 51 00 00 00 03
+				];
+				qcom,mdss-dsi-ultra-low-power-aod-on-command = [
+					39 00 00 40 00 00 04 FF 08 58 00
+					05 00 00 40 00 00 01 39
+					15 00 00 00 00 00 02 61 0F
+				];
+				qcom,mdss-dsi-ultra-low-power-aod-off-command = [
+					39 00 00 40 00 00 04 FF 08 58 00
+					05 00 00 40 00 00 01 39
+					15 00 00 00 00 00 02 61 0D
+				];
+				qcom,mdss-dsi-hbm-off-command = [
+					39 00 00 00 00 00 04 FF 08 58 00
+				];
+				qcom,mdss-dsi-hbm-max-command = [
+					39 00 00 40 00 00 04 FF 08 58 29
+					15 00 00 40 00 00 02 82 2C
+					39 00 00 40 00 00 04 FF 08 58 23
+					15 00 00 40 00 00 02 CC 01
+					39 00 00 40 00 00 04 FF 08 58 6F
+					39 00 00 40 00 00 05 C6 02 C0 00 40
+					39 00 00 40 00 00 04 FF 08 58 23
+					15 00 00 40 00 00 02 CC 00
+					39 00 00 40 00 00 04 FF 08 58 00
+					39 00 00 40 00 00 04 FF 08 58 4F
+					39 00 00 40 00 00 02 88 78
+					39 00 00 40 00 00 04 FF 08 58 2D
+					39 00 00 40 00 00 02 98 00
+					39 00 00 40 00 00 04 FF 08 58 10
+					39 00 00 40 00 00 04 8F 88 D0 D0
+					39 00 00 40 00 00 04 FF 08 58 63
+					39 00 00 40 00 00 04 A1 AF B4 B4
+					39 00 00 40 00 00 03 96 FF FF
+					39 00 00 40 00 00 04 FF 08 58 00
+					39 00 00 40 00 00 05 51 0F FF 00 00
+					39 00 00 40 00 00 04 FF 08 58 4F
+					39 00 00 40 00 00 02 8A 78
+					39 00 00 40 00 00 04 FF 08 58 10
+					39 00 00 40 00 00 04 8F C8 CD D0
+					39 00 00 40 00 00 04 FF 08 58 63
+					39 00 00 40 00 00 04 A1 BF B4 34
+					39 00 00 40 00 00 04 FF 08 58 4F
+					39 00 00 40 00 00 02 8B 78
+					39 00 00 40 00 00 04 FF 08 58 00
+					05 00 00 00 00 00 01 2C
+				];
+				qcom,mdss-dsi-hbm-exit-max-command = [
+					39 00 00 40 00 00 04 FF 08 58 4F
+					39 00 00 40 00 00 02 88 78
+					39 00 00 40 00 00 04 FF 08 58 2D
+					39 00 00 40 00 00 02 98 00
+					39 00 00 40 00 00 04 FF 08 58 10
+					39 00 00 40 00 00 04 8F CC CD CD
+					39 00 00 40 00 00 04 FF 08 58 63
+					39 00 00 40 00 00 04 A1 FF 34 34
+					39 00 00 40 00 00 03 96 FF 61
+					39 00 00 40 00 00 04 FF 08 58 00
+					39 00 00 40 00 00 05 51 0F FE 00 00
+					39 00 00 40 00 00 04 FF 08 58 4F
+					39 00 00 40 00 00 02 8A 78
+					39 00 00 40 00 00 04 FF 08 58 10
+					39 00 00 40 00 00 04 8F C8 CD D0
+					39 00 00 40 00 00 04 FF 08 58 63
+					39 00 00 40 00 00 04 A1 BF B4 34
+					39 00 00 40 00 00 04 FF 08 58 4F
+					39 00 00 40 00 00 02 8B 78
+					39 00 00 40 00 00 04 FF 08 58 00
+					05 00 00 00 00 00 01 2C
+				];
+
+				/* DBV backlight 3515~3543 */
+				qcom,mdss-dsi-demura-dbv-mode-0-command = [
+					39 00 00 40 00 00 04 FF 08 58 63
+					39 00 00 40 00 00 04 96 BF E3 5C
+					39 00 00 40 00 00 04 FF 08 58 00
+					39 00 00 00 00 00 03 51 0D D7
+				];
+				/* DBV backlight 3543~3600 */
+				qcom,mdss-dsi-demura-dbv-mode-1-command = [
+					39 00 00 40 00 00 04 FF 08 58 63
+					39 00 00 40 00 00 04 96 BF E3 A9
+					39 00 00 40 00 00 04 FF 08 58 00
+					39 00 00 00 00 00 03 51 0E 10
+				];
+				/* DBV backlight 3600~3680 */
+				qcom,mdss-dsi-demura-dbv-mode-2-command = [
+					39 00 00 40 00 00 04 FF 08 58 63
+					39 00 00 40 00 00 04 96 BF E3 4C
+					39 00 00 40 00 00 04 FF 08 58 00
+					39 00 00 00 00 00 03 51 0E 60
+				];
+				/* DBV backlight 3680~3720 */
+				qcom,mdss-dsi-demura-dbv-mode-3-command = [
+					39 00 00 40 00 00 04 FF 08 58 63
+					39 00 00 40 00 00 04 96 BF E3 92
+					39 00 00 40 00 00 04 FF 08 58 00
+					39 00 00 00 00 00 03 51 0E 88
+				];
+				/* DBV backlight 3720~3770 */
+				qcom,mdss-dsi-demura-dbv-mode-4-command = [
+					39 00 00 40 00 00 04 FF 08 58 63
+					39 00 00 40 00 00 04 96 BF E3 42
+					39 00 00 40 00 00 04 FF 08 58 00
+					39 00 00 00 00 00 03 51 0E BA
+				];
+				/* DBV backlight 3770~3860 */
+				qcom,mdss-dsi-demura-dbv-mode-5-command = [
+					39 00 00 40 00 00 04 FF 08 58 63
+					39 00 00 40 00 00 04 96 BF E3 84
+					39 00 00 40 00 00 04 FF 08 58 00
+					39 00 00 00 00 00 03 51 0F 14
+				];
+				/* DBV backlight 3860~3949 */
+				qcom,mdss-dsi-demura-dbv-mode-6-command = [
+					39 00 00 40 00 00 04 FF 08 58 63
+					39 00 00 40 00 00 04 96 BF E3 26
+					39 00 00 40 00 00 04 FF 08 58 00
+					39 00 00 00 00 00 03 51 0F 6D
+				];
+				/* DBV backlight 3949~4094 */
+				qcom,mdss-dsi-demura-dbv-mode-7-command = [
+					39 00 00 40 00 00 04 FF 08 58 63
+					39 00 00 40 00 00 04 96 BF E3 6A
+					39 00 00 40 00 00 04 FF 08 58 00
+					39 00 00 00 00 00 03 51 0F FE
+				];
+
+				qcom,mdss-dsi-on-command-state = "dsi_lp_mode";
+				qcom,mdss-dsi-off-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-timing-switch-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-lp1-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-nolp-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-aod-high-mode-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-aod-low-mode-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-ultra-low-power-aod-on-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-ultra-low-power-aod-off-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-hbm-off-command-state = "dsi_hs_mode";
+				qcom,dsi-panel-date-switch-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-esd-switch-page-command-state = "dsi_lp_mode";
+				qcom,mdss-dsi-default-switch-page-command-state = "dsi_lp_mode";
+				qcom,mdss-dsi-hbm-max-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-hbm-exit-max-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-demura-dbv-mode-0-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-demura-dbv-mode-1-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-demura-dbv-mode-2-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-demura-dbv-mode-3-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-demura-dbv-mode-4-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-demura-dbv-mode-5-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-demura-dbv-mode-6-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-demura-dbv-mode-7-command-state = "dsi_hs_mode";
+
+				qcom,compression-mode = "dsc";
+				qcom,mdss-dsc-encoders = <2>;
+				qcom,mdss-dsc-slice-per-pkt = <2>;
+				qcom,mdss-dsc-bit-per-component = <10>;
+				qcom,mdss-dsc-bit-per-pixel = <8>;
+				qcom,mdss-dsc-version = <0x11>;
+				qcom,mdss-dsc-scr-version = <1>;
+				qcom,mdss-dsc-block-prediction-enable;

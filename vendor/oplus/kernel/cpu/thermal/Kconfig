@@ -1,0 +1,25 @@
+#
+# Generic thermal sysfs drivers configuration
+#
+
+config HORAE_THERMAL_SHELL
+	  tristate "Horae shell temp driver"
+	  default y
+	  help
+	    Provide three thermal zones(front, frame and back) to get real shell temp.
+
+config OPLUS_IPA_THERMAL
+	  tristate "oplus ipa thermal sensor driver"
+	  depends on HORAE_THERMAL_SHELL
+	  default n
+	  help
+	    the driver of oplus virtual ipa sensor
+
+config OPLUS_THERMAL_VENDOR_HOOK
+	tristate "Oplus thermal vendor hook driver"
+	depends on THERMAL
+	help
+	   This is a placeholder driver for all thermal vendor hook register.
+	   It registers for thermal cooling device stats vendor hook and
+	   disables cooling stats for different thermal cooling devices
+	   selectively.

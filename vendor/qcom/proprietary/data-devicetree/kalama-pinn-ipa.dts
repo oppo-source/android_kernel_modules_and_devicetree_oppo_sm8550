@@ -1,0 +1,28 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/soc/qcom,ipcc.h>
+#include <dt-bindings/interconnect/qcom,kalama.h>
+#include <dt-bindings/clock/qcom,gcc-kalama.h>
+#include <dt-bindings/clock/qcom,rpmh.h>
+#include "kalama-ipa.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Kalama Pinn SOCs";
+	compatible = "qcom,kalama";
+	qcom,msm-id = <519 0x10000>, <536 0x10000>;
+	qcom,board-id = <0x03010001 0x3>, <0x02010008 0x2>;
+};
+
+&soc {
+        qcom,ipa-mpm {
+                compatible = "qcom,ipa-mpm";
+                qcom,iova-mapping = <0x10000000 0x0FFFFFFF>;
+        };
+};
+
+&ipa_hw {
+        qcom,platform-type = <2>; /* APQ platform */
+        qcom,secure-debug-check-action = <0>;
+};
