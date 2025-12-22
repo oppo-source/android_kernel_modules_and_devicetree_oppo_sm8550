@@ -1,0 +1,4 @@
+config OPLUS_FEATURE_MGLRU_OPT
+	tristate "enable mglru_opt"
+	default n
+	depends on OPLUS_FEATURE_MM_OSVELTE

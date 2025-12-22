@@ -1,0 +1,19 @@
+&pm7550ba_eusb2_repeater {
+	qcom,param-override-seq = <0x0e 0x51 0x01 0x52 0x06 0x53 0x01 0x54 0x03 0x55 0x07 0x57>;
+	qcom,param-override-seq-host = <0x0e 0x51 0x01 0x52 0x06 0x53 0x03 0x54 0x03 0x55 0x07 0x57>;
+};
+
+&usb0 {
+/delete-property/ extcon;
+	dwc3@a600000 {
+		usb-phy = <&eusb2_phy0>, <&usb_nop_phy>;
+		maximum-speed = "high-speed";
+		snps,usb2-lpm-disable;
+		snps,usb2-gadget-lpm-disable;
+		dr_mode = "otg";
+	};
+};
+
+&usb_qmp_dp_phy {
+	status = "disabled";
+};

@@ -1,0 +1,51 @@
+#include "oplus_chg.h"
+#include "oplus-chg-bh-common.dtsi"
+#include "oplus-chg-bh-ufcs.dtsi"
+#include "oplus-chg-bh-pps-33w.dtsi"
+
+&soc {
+	oplus_cpa: oplus,cpa {
+		compatible = "oplus,cpa";
+		oplus,protocol_list = <CHG_PROTOCOL_UFCS 80
+				       CHG_PROTOCOL_VOOC 80
+				       CHG_PROTOCOL_PPS  33
+				       CHG_PROTOCOL_PD 18
+				       CHG_PROTOCOL_QC 18>;
+		oplus,default_protocol_list = <CHG_PROTOCOL_UFCS
+					       CHG_PROTOCOL_VOOC
+					       CHG_PROTOCOL_PPS
+					       CHG_PROTOCOL_PD>;
+	};
+};
+
+&soc {
+	maxim_encryption_gauge: maxim_gauge {
+		status = "ok";
+		compatible = "oplus-maxim";
+		pinctrl-names = "maxim_active";
+		pinctrl-0 = <&maxim_active>;
+		data-gpio = <&tlmm 146 0x00>;
+		gpio-addr-set-out = <0xF192000>;
+		gpio-addr-set-in = <0xF192000>;
+		gpio-addr-level_high = <0xF192004>;
+		gpio-addr-level_low = <0xF192004>;
+		gpio-addr-data-in = <0xF192004>;
+		gpio-addr-offset = <0x0>;
+
+		gpio-set-out-val = <0x1bc3>;
+		gpio-set-in-val = <0x19c3>;
+		gpio_level_high_val = <0x3>;
+		gpio_level_low_val = <0x0>;
+
+		/*write_begin_low_level_time = <600>;*/
+		/*write_relese_ic_time = <6>;*/
+		/*oplus,maxim_romid_crc_support;*/
+
+		oplus,batt_info = /bits/ 8 <0x36 0x31 0x31 0x33 0x30 0x33 0x30 0x30 0x30 0x32 0x31 0x35
+                                            0x36 0x31 0x31 0x33 0x30 0x33 0x30 0x30 0x30 0x32 0x39 0x37
+                                            0x36 0x31 0x31 0x33 0x30 0x33 0x30 0x30 0x30 0x32 0x39 0x38>;
+
+		oplus,ic_type = <OPLUS_CHG_IC_GAUGE>;
+		oplus,ic_index = <1>;
+	};
+};

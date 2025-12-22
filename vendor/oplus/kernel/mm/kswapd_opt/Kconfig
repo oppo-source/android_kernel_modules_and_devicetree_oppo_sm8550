@@ -1,0 +1,13 @@
+config OPLUS_FEATURE_KSWAPD_OPT
+	tristate "enable oplus kswapd opt feature"
+	default n
+	help
+	  This feature enable some kswapd opt feature. include
+	  alloc callsite adjust flags to exclude kswapd_recalim where fallback to low order alloc possible.
+	  collect alloc slowpath wakeup kswapd stat by order layout.
+	  collect kswapd pgdat_balance workload stat by order layout.
+config COSTLY_ALLOC_MASK_RECLAIM
+	bool "costly alloc mask reclaim"
+	default n
+	help
+	  define this config to mask reclaim for costly allocation
